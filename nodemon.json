@@ -1,5 +1,6 @@
 {
     "env": {
-        "MONGO_ATLAS_PASSWORD": "admin"
+        "MONGO_ATLAS_PASSWORD": "admin",
+        "URL": "http://localhost"
     }
 }

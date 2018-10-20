@@ -8,5 +8,6 @@ module.exports = {
             "error",
             4,
         ],
+        "no-underscore-dangle" : "off",
     }
 };
