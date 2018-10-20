@@ -1,11 +1,15 @@
 const morgan = require('morgan');
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const articlesRoutes = require('./api/routes/articles');
 const commentsRouter = require('./api/routes/comments');
 
 const app = express();
+
+const mongoDBURI = `mongodb+srv://boristane:${process.env.MONGO_ATLAS_PASSWORD}@blog-fy3jk.gcp.mongodb.net/test?retryWrites=true`;
+mongoose.connect(mongoDBURI, { useNewUrlParser: true });
 
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -21,7 +25,7 @@ app.use((req, res, next) => {
         res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
         return res.status(200).json({});
     }
-    next();
+    return next();
 });
 
 
