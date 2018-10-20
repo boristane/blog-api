@@ -28,6 +28,8 @@ app.use((req, res, next) => {
     return next();
 });
 
+// Static folder
+app.use('/uploads', express.static('uploads'));
 
 // Routes for the request
 app.use('/articles', articlesRoutes);

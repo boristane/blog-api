@@ -72,7 +72,7 @@ router.post('/', (req, res, next) => {
                     message: 'No valid article found.',
                 });
             }
-            const createdAt = new Date().toUTCString();
+            const createdAt = new Date().toISOString();
             const updatedAt = createdAt;
             const comment = new Comment({
                 _id: new mongoose.Types.ObjectId(),

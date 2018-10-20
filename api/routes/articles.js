@@ -1,12 +1,35 @@
 const express = require('express');
+const multer = require('multer');
 const mongoose = require('mongoose');
 const Article = require('../models/article');
 
 const router = express.Router();
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './uploads');
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${file.originalname}`);
+    },
+});
+const filter = (req, file, cb) => {
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'application/octet-stream') {
+        cb(null, true);
+    } else {
+        cb(null, false);
+    }
+};
+const limits = {
+    fileSize: 1024 * 1024 * 5,
+};
+const upload = multer({ storage, limits, filter }).fields([
+    { name: 'content', maxCount: 1 },
+    { name: 'image', maxCount: 1 },
+]);
 
 router.get('/', (req, res, next) => {
     Article.find()
-        .select('_id title description tags createdAt updatedAt.')
+        .select('_id title description tags createdAt updatedAt image content')
         .limit(10)
         .exec()
         .then((documents) => {
@@ -16,6 +39,8 @@ router.get('/', (req, res, next) => {
                     _id: doc._id,
                     title: doc.title,
                     description: doc.description,
+                    image: doc.image,
+                    content: doc.content,
                     tags: doc.tags,
                     createdAt: doc.createdAt,
                     updatedAt: doc.updatedAt,
@@ -28,23 +53,23 @@ router.get('/', (req, res, next) => {
             res.status(200).json(response);
         })
         .catch((err) => {
-            console.log(err);
             res.status(500).json({
                 error: err,
             });
         });
 });
 
-router.post('/', (req, res, next) => {
+router.post('/', upload, (req, res, next) => {
     const {
         title,
         description,
-        image,
         tags,
-        content,
     } = req.body;
 
-    const createdAt = new Date().toUTCString();
+    const content = req.files.content[0].path;
+    const image = req.files.image[0].path;
+
+    const createdAt = new Date().toISOString();
     const updatedAt = createdAt;
 
     const article = new Article({
@@ -79,7 +104,6 @@ router.post('/', (req, res, next) => {
             res.status(201).json(response);
         })
         .catch((err) => {
-            console.log(err);
             res.status(500).json({
                 error: err,
             });
@@ -89,7 +113,7 @@ router.post('/', (req, res, next) => {
 router.get('/:articleID', (req, res, next) => {
     const { articleID } = req.params;
     Article.findById(articleID)
-        .select('_id title description tags createdAt updatedAt content')
+        .select('_id title description tags createdAt updatedAt content image')
         .exec()
         .then((document) => {
             if (!document) {
@@ -106,7 +130,6 @@ router.get('/:articleID', (req, res, next) => {
             });
         })
         .catch((err) => {
-            console.log(err);
             res.status(500).json({
                 error: err,
             });
@@ -119,6 +142,7 @@ router.patch('/:articleID', (req, res, next) => {
     Object.keys(req.body).forEach((key) => {
         updateOps[key] = req.body[key];
     });
+    updateOps.updatedAt = new Date().toISOString();
     Article.updateOne({ _id: articleID }, { $set: updateOps })
         .exec()
         .then((result) => {
@@ -131,7 +155,6 @@ router.patch('/:articleID', (req, res, next) => {
             });
         })
         .catch((err) => {
-            console.log(err);
             res.status(500).json({
                 error: err,
             });
@@ -152,7 +175,6 @@ router.delete('/:articleID', (req, res, next) => {
             });
         })
         .catch((err) => {
-            console.log(err);
             res.status(500).json({
                 error: err,
             });
