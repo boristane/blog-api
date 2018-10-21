@@ -10,6 +10,7 @@ const articleSchema = mongoose.Schema({
         type: String,
     }],
     createdAt: { type: String, required: true },
+    hidden: { type: Boolean, default: false },
     updatedAt: String,
 });
 

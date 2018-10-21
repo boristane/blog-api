@@ -1,11 +1,13 @@
 const mongoose = require('mongoose');
 const express = require('express');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const auth = require('../auth/checkAuth');
 
 const router = express.Router();
 
-router.get('/', (req, res, next) => {
+router.get('/', auth, (req, res, next) => {
     User.find()
         .select('username email createdAt updatedAt')
         .exec()
@@ -84,7 +86,49 @@ router.post('/signup', (req, res, next) => {
         });
 });
 
-router.get('/:userID', (req, res, next) => {
+router.post('/login', (req, res, next) => {
+    User.find({ email: req.body.email })
+        .exec()
+        .then((documents) => {
+            if (documents.length <= 0) {
+                return res.status(401).json({
+                    message: 'Authentication Failed.',
+                });
+            }
+            bcrypt.compare(req.body.password, documents[0].password, (err, success) => {
+                if (err) {
+                    return res.status(401).json({
+                        message: 'Authentication Failed.',
+                    });
+                }
+                if (!success) {
+                    return res.status(401).json({
+                        message: 'Authentication Failed.',
+                    });
+                }
+                const token = jwt.sign({
+                    email: documents[0].email,
+                    id: documents[0]._id,
+                    username: documents[0].username,
+                },
+                process.env.JWT_KEY,
+                {
+                    expiresIn: '1h',
+                });
+                return res.status(200).json({
+                    token,
+                    message: 'Authentication Successful.',
+                });
+            });
+        })
+        .catch((err) => {
+            res.status(500).json({
+                error: err,
+            });
+        });
+});
+
+router.get('/:userID', auth, (req, res, next) => {
     User.findOne({ _id: req.params.userID })
         .select('username email createdAt updatedAt')
         .exec()
@@ -109,7 +153,7 @@ router.get('/:userID', (req, res, next) => {
         });
 });
 
-router.delete('/:userID', (req, res, next) => {
+router.delete('/:userID', auth, (req, res, next) => {
     User.deleteOne({ _id: req.params.userID })
         .exec()
         .then((result) => {

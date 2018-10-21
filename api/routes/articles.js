@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const mongoose = require('mongoose');
 const Article = require('../models/article');
+const auth = require('../auth/checkAuth');
 
 const router = express.Router();
 const storage = multer.diskStorage({
@@ -44,6 +45,7 @@ router.get('/', (req, res, next) => {
                     tags: doc.tags,
                     createdAt: doc.createdAt,
                     updatedAt: doc.updatedAt,
+                    hiddent: doc.hidden,
                     request: {
                         type: 'GET',
                         url: `${process.env.URL}:${process.env.PORT || 3000}/articles/${doc._id}`,
@@ -59,7 +61,7 @@ router.get('/', (req, res, next) => {
         });
 });
 
-router.post('/', upload, (req, res, next) => {
+router.post('/', auth, upload, (req, res, next) => {
     const {
         title,
         description,
@@ -136,7 +138,7 @@ router.get('/:articleID', (req, res, next) => {
         });
 });
 
-router.patch('/:articleID', (req, res, next) => {
+router.patch('/:articleID', auth, (req, res, next) => {
     const { articleID } = req.params;
     const updateOps = {};
     Object.keys(req.body).forEach((key) => {
@@ -161,7 +163,7 @@ router.patch('/:articleID', (req, res, next) => {
         });
 });
 
-router.delete('/:articleID', (req, res, next) => {
+router.delete('/:articleID', auth, (req, res, next) => {
     const { articleID } = req.params;
     Article.deleteOne({ _id: articleID })
         .exec()
