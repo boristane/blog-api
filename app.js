@@ -3,8 +3,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-const articlesRoutes = require('./api/routes/articles');
+const articlesRouter = require('./api/routes/articles');
 const commentsRouter = require('./api/routes/comments');
+const usersRouter = require('./api/routes/users');
 
 const app = express();
 
@@ -32,8 +33,9 @@ app.use((req, res, next) => {
 app.use('/uploads', express.static('uploads'));
 
 // Routes for the request
-app.use('/articles', articlesRoutes);
+app.use('/articles', articlesRouter);
 app.use('/comments', commentsRouter);
+app.use('/users', usersRouter);
 
 // Error handling
 app.use((req, resp, next) => {
