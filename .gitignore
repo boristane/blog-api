@@ -62,6 +62,3 @@ nodemon.json
 
 # next.js build output
 .next
-
-# assets
-uploads/
