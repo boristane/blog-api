@@ -38,9 +38,9 @@ exports.post = (req, res, next) => {
     const {
         title,
         description,
-        tags,
     } = req.body;
 
+    const tags = req.body.tags.split(', ');
     const content = req.files.content[0].path;
     const image = req.files.image[0].path;
 
