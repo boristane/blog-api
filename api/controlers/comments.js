@@ -26,7 +26,7 @@ exports.getByArticle = (req, res, next) => {
                 comments,
                 request: {
                     type: 'GET',
-                    url: `${process.env.URL}:${process.env.PORT || 3000}/articles/${articleID}`,
+                    url: `${process.env.URL}/articles/${articleID}`,
                 },
             };
             return res.status(200).json(response);

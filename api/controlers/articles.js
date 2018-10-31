@@ -21,7 +21,7 @@ exports.getAll = (req, res, next) => {
                     hiddent: doc.hidden,
                     request: {
                         type: 'GET',
-                        url: `${process.env.URL}:${process.env.PORT || 3000}/articles/${doc._id}`,
+                        url: `${process.env.URL}/articles/${doc._id}`,
                     },
                 })),
             };
@@ -41,8 +41,8 @@ exports.post = (req, res, next) => {
     } = req.body;
 
     const tags = req.body.tags.split(', ');
-    const content = req.files.content[0].path;
-    const image = req.files.image[0].path;
+    const content = req.files.content[0].location;
+    const image = req.files.image[0].location;
 
     const createdAt = new Date().toISOString();
     const updatedAt = createdAt;
@@ -73,7 +73,7 @@ exports.post = (req, res, next) => {
                 },
                 request: {
                     type: 'GET',
-                    url: `${process.env.URL}:${process.env.PORT || 3000}/articles/${result._id}`,
+                    url: `${process.env.URL}/articles/${result._id}`,
                 },
             };
             res.status(201).json(response);
@@ -100,7 +100,7 @@ exports.get = (req, res, next) => {
                 article: document,
                 request: {
                     type: 'GET',
-                    url: `${process.env.URL}:${process.env.PORT || 3000}/articles`,
+                    url: `${process.env.URL}/articles`,
                 },
             });
         })
@@ -125,7 +125,7 @@ exports.patch = (req, res, next) => {
                 message: 'Article updated.',
                 request: {
                     type: 'GET',
-                    url: `${process.env.URL}:${process.env.PORT || 3000}/articles/${articleID}`,
+                    url: `${process.env.URL}/articles/${articleID}`,
                 },
             });
         })
@@ -145,7 +145,7 @@ exports.delete = (req, res, next) => {
                 message: 'Article deleted.',
                 request: {
                     type: 'GET',
-                    url: `${process.env.URL}:${process.env.PORT || 3000}/articles`,
+                    url: `${process.env.URL}/articles`,
                 },
             });
         })

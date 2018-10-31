@@ -18,7 +18,7 @@ exports.getAll = (req, res, next) => {
                     updatedAt: doc.updatedAt,
                     request: {
                         type: 'GET',
-                        url: `${process.env.URL}:${process.env.PORT || 3000}/users/${doc._id}`,
+                        url: `${process.env.URL}/users/${doc._id}`,
                     },
                 })),
             };
@@ -68,7 +68,7 @@ exports.signup = (req, res, next) => {
                             },
                             request: {
                                 type: 'GET',
-                                url: `${process.env.URL}:${process.env.PORT || 3000}/users/${result._id}`,
+                                url: `${process.env.URL}/users/${result._id}`,
                             },
                         };
                         return res.status(201).json(response);
@@ -138,7 +138,7 @@ exports.get = (req, res, next) => {
                 user: document,
                 request: {
                     type: 'GET',
-                    url: `${process.env.URL}:${process.env.PORT || 3000}/users`,
+                    url: `${process.env.URL}/users`,
                 },
             });
         })
@@ -157,7 +157,7 @@ exports.delete = (req, res, next) => {
                 message: 'User deleted.',
                 request: {
                     type: 'GET',
-                    url: `${process.env.URL}:${process.env.PORT || 3000}/users`,
+                    url: `${process.env.URL}/users`,
                 },
             });
         })
