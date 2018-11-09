@@ -1,27 +1,27 @@
 const mongoose = require('mongoose');
-const Article = require('../models/article');
+const ArtPiece = require('../models/artPiece');
 
 exports.getAll = (req, res, next) => {
-    Article.find()
-        .select('_id title description tags createdAt updatedAt image content')
-        .limit(10)
+    ArtPiece.find()
+        .select('_id title createdAt updatedAt inspiration lang quote image js')
+        .limit(30)
         .exec()
         .then((documents) => {
             const response = {
                 count: documents.length,
-                articles: documents.map(doc => ({
+                artPieces: documents.map(doc => ({
                     _id: doc._id,
                     title: doc.title,
-                    description: doc.description,
-                    image: doc.image,
-                    content: doc.content,
-                    tags: doc.tags,
                     createdAt: doc.createdAt,
                     updatedAt: doc.updatedAt,
-                    hidden: doc.hidden,
+                    inspiration: doc.inspiration,
+                    lang: doc.lang,
+                    quote: doc.quote,
+                    image: doc.image,
+                    js: doc.js,
                     request: {
                         type: 'GET',
-                        url: `${process.env.URL}/articles/${doc._id}`,
+                        url: `${process.env.URL}/artpieces/${doc._id}`,
                     },
                 })),
             };
@@ -37,46 +37,53 @@ exports.getAll = (req, res, next) => {
 exports.post = (req, res, next) => {
     const {
         title,
-        description,
+        inspiration,
+        lang,
     } = req.body;
-
-    const tags = req.body.tags.split(', ');
-    const content = req.files.content[0].location;
-    const image = req.files.image[0].location;
-
+    const quote = {
+        text: req.body.text,
+        author: req.body.author,
+        ref: req.body.ref,
+        url: req.body.url,
+    };
     const createdAt = new Date().toISOString();
     const updatedAt = createdAt;
 
-    const article = new Article({
+    const image = req.files.image[0].location;
+    const js = req.files.js[0].location;
+
+    const artPiece = new ArtPiece({
         _id: new mongoose.Types.ObjectId(),
         title,
-        description,
+        inspiration,
+        lang,
+        quote,
         image,
-        tags,
-        content,
+        js,
         createdAt,
         updatedAt,
     });
 
-    article.save()
+    artPiece.save()
         .then((result) => {
             const response = {
-                message: 'Article created successfully.',
-                article: {
+                message: 'Art Piece created successfully.',
+                artPiece: {
                     _id: result._id,
                     title: result.title,
-                    description: result.description,
+                    inspiration: result.inspiration,
+                    lang: result.lang,
+                    quote: result.quote,
                     image: result.image,
-                    tags: result.tags,
-                    content: result.content,
-                    createdAt: result.createdAt,
-                },
-                request: {
-                    type: 'GET',
-                    url: `${process.env.URL}/articles/${result._id}`,
+                    js: result.js,
+                    createdAt: res.createdAt,
+                    request: {
+                        type: 'GET',
+                        url: `${process.env.URL}/artpieces/${result._id}`,
+                    },
                 },
             };
-            res.status(201).json(response);
+            res.status(200).json(response);
         })
         .catch((err) => {
             res.status(500).json({
@@ -86,21 +93,21 @@ exports.post = (req, res, next) => {
 };
 
 exports.get = (req, res, next) => {
-    const { articleID } = req.params;
-    Article.findById(articleID)
-        .select('_id title description tags createdAt updatedAt content image')
+    const { artPieceID } = req.params;
+    ArtPiece.findById(artPieceID)
+        .select('_id title createdAt updatedAt inspiration lang quote image js')
         .exec()
         .then((document) => {
             if (!document) {
-                return res.status(404).json({
+                res.status(404).json({
                     message: 'No valid entry found.',
                 });
             }
-            return res.status(200).json({
-                article: document,
+            res.status(200).json({
+                artPiece: document,
                 request: {
                     type: 'GET',
-                    url: `${process.env.URL}/articles`,
+                    url: `${process.env.URL}/artpieces`,
                 },
             });
         })
@@ -112,20 +119,20 @@ exports.get = (req, res, next) => {
 };
 
 exports.patch = (req, res, next) => {
-    const { articleID } = req.params;
+    const { artPieceID } = req.params;
     const updateOps = {};
     Object.keys(req.body).forEach((key) => {
         updateOps[key] = req.body[key];
     });
     updateOps.updatedAt = new Date().toISOString();
-    Article.updateOne({ _id: articleID }, { $set: updateOps })
+    ArtPiece.updateOne({ _id: artPieceID }, { $set: updateOps })
         .exec()
         .then((result) => {
             res.status(200).json({
-                message: 'Article updated.',
+                message: 'Art Piece updated.',
                 request: {
                     type: 'GET',
-                    url: `${process.env.URL}/articles/${articleID}`,
+                    url: `${process.env.URL}/artpieces/${artPieceID}`,
                 },
             });
         })
@@ -137,15 +144,15 @@ exports.patch = (req, res, next) => {
 };
 
 exports.delete = (req, res, next) => {
-    const { articleID } = req.params;
-    Article.deleteOne({ _id: articleID })
+    const { artPieceID } = req.params;
+    ArtPiece.findByIdAndRemove(artPieceID)
         .exec()
         .then((result) => {
             res.status(200).json({
-                message: 'Article deleted.',
+                message: 'Art Piece deleted.',
                 request: {
                     type: 'GET',
-                    url: `${process.env.URL}/articles`,
+                    url: `${process.env.URL}/artpieces`,
                 },
             });
         })
