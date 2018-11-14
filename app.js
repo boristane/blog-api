@@ -7,6 +7,7 @@ const articlesRouter = require('./api/routes/articles');
 const commentsRouter = require('./api/routes/comments');
 const usersRouter = require('./api/routes/users');
 const artPiecesRouter = require('./api/routes/artPieces');
+const projectsRouter = require('./api/routes/projects');
 
 const app = express();
 
@@ -38,6 +39,7 @@ app.use('/articles', articlesRouter);
 app.use('/comments', commentsRouter);
 app.use('/users', usersRouter);
 app.use('/artPieces', artPiecesRouter);
+app.use('/projects', projectsRouter);
 
 // Error handling
 app.use((req, resp, next) => {
