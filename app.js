@@ -11,7 +11,7 @@ const projectsRouter = require('./api/routes/projects');
 
 const app = express();
 
-const mongoDBURI = `mongodb+srv://boristane:${process.env.MONGO_ATLAS_PASSWORD}@blog-fy3jk.gcp.mongodb.net/test?retryWrites=true`;
+const mongoDBURI = `mongodb+srv://boristane:${process.env.MONGO_ATLAS_PASSWORD}@blog-fy3jk.gcp.mongodb.net/${process.env.DATABASE}?retryWrites=true`;
 mongoose.connect(mongoDBURI, { useNewUrlParser: true });
 
 app.use(morgan('dev'));
