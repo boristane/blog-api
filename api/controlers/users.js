@@ -60,7 +60,7 @@ exports.signup = (req, res, next) => {
                     .then((result) => {
                         const response = {
                             message: 'User created successfully.',
-                            article: {
+                            user: {
                                 _id: result._id,
                                 username: result.usermane,
                                 email: result.email,
