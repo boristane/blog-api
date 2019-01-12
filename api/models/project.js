@@ -10,6 +10,8 @@ const ProjectSchema = mongoose.Schema({
     stack: [{
         type: String,
     }],
+    createdAt: { type: String, required: true },
+    updatedAt: String,
 });
 
 module.exports = mongoose.model('Project', ProjectSchema);
