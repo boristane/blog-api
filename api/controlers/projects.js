@@ -17,6 +17,8 @@ exports.getAll = (req, res, next) => {
                     description: doc.description,
                     image: doc.image,
                     stack: doc.stack,
+                    createdAt: doc.createdAt,
+                    updatedAt: doc.updatedAt,
                     request: {
                         type: 'GET',
                         url: `${process.env.URL}/projects/${doc._id}`,
