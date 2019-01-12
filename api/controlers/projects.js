@@ -3,7 +3,7 @@ const Project = require('../models/project');
 
 exports.getAll = (req, res, next) => {
     Project.find()
-        .select('_id title url github description image stack')
+        .select('_id title url github description image stack createdAt updatedAt')
         .limit(10)
         .exec()
         .then((documents) => {
