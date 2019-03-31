@@ -1,25 +1,15 @@
 import supertest from 'supertest';
 import mongoose from 'mongoose';
 const server = require('../server');
-import { signup, login, deleteUser } from './utils';
+import {signup,
+  login,
+  deleteUser,
+  loginAndDeleteAllUsers,
+} from './utils';
 
 const username = 'surprise';
 const email = 'suprise@surprise.com';
 const password = 'motherfucker';
-
-async function loginAndDeleteAllUsers(email, password) {
-  const token = await login(email, password);
-  const response = await supertest(server)
-      .get('/users/')
-      .set('Authorization', `Bearer ${token}`);
-  const users = response.body.users;
-  if(users){
-    users.forEach(async (user) => {
-      const userId = user._id;
-      await deleteUser(userId, token);
-    });
-  }
-}
 
 // close the server after each test
 afterAll(async () => {
@@ -146,7 +136,6 @@ describe('/users route testing', () => {
     const response = await supertest(server)
       .get(`/users/${fakeUserId}`)
       .set('Authorization', `Bearer ${token}`);
-      console.log(response.body);
     expect(response.status).toBe(404);
     expect(response.body.message).toBe('No valid user found.');
 
