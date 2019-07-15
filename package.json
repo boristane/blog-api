@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/boristane/blog-api#readme",
   "devDependencies": {
-    "babel-jest": "^23.6.0",
+    "babel-jest": "^24.8.0",
     "babel-preset-env": "^1.7.0",
     "eslint": "^5.7.0",
     "eslint-config-airbnb-base": "^13.1.0",
