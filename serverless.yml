@@ -1,0 +1,27 @@
+service: blog-api
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  memorySize: 512
+  stage: ${opt:stage}
+  deploymentBucket:
+    name: boristane-lambdas-deployments
+  region: eu-west-2
+  logRetentionInDays: 7
+  versionFunctions: false
+
+  environment:
+    MONGO_ATLAS_PASSWORD: ${ssm:/boristane/database/mongo/blog-api-password}
+    URL: "useless"
+    JWT_KEY: ${ssm:/boristane/jwt/blog-api/key}
+    AWS_KEY: ${ssm:/boristane/aws-keys/blog-api-access-key}
+    AWS_ID: ${ssm:/boristane/aws-keys/blog-api-access-key-id}
+    DATABASE: ${ssm:/boristane/database/mongo/blog-api-name}
+
+functions:
+  server:
+    handler: index.server
+    events:
+      - http: ANY /
+      - http: 'ANY {proxy+}'

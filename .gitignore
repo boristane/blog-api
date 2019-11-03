@@ -65,3 +65,7 @@ nodemon.json
 
 # vscode files
 .vscode
+
+reports
+
+.serverless
